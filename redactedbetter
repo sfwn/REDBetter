@@ -229,7 +229,7 @@ def main():
 
             while os.path.exists(flac_dir) == False:
                 print "Path not found: %s" % flac_dir
-                alternative_file_path_exists = ""
+                alternative_file_path_exists = "n"
                 while (alternative_file_path_exists.lower() != "y") and (alternative_file_path_exists.lower() != "n"):
                     alternative_file_path_exists = raw_input("Do you wish to provide an alternative file path? (y/n): ")
 
