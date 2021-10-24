@@ -99,11 +99,17 @@ class RedactedAPI:
         mainpage = 'https://redacted.ch/'
         cookiedict = {"session": self.session_cookie}
         cookies = requests.utils.cookiejar_from_dict(cookiedict)
-
         self.session.cookies.update(cookies)
-        r = self.session.get(mainpage, verify=False)
-        print(r)
-        print(r.text)
+
+        # allproxy
+        allproxy = os.getenv('ALL_PROXY')
+        proxies = {}
+        if allproxy != "":
+            proxies = {'http': os.getenv("ALL_PROXY"),
+                       'https': os.getenv("ALL_PROXY")}
+            self.session.proxies.update(proxies)
+
+        r = self.session.get(mainpage)
         try:
             accountinfo = self.request('index')
             self.authkey = accountinfo['authkey']
