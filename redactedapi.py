@@ -27,7 +27,7 @@ media_search_map = {
     'dat': 'DAT',
     'web': 'WEB',
     'blu-ray': 'Blu-ray'
-    }
+}
 
 lossless_media = set(media_search_map.keys())
 
@@ -37,32 +37,37 @@ formats = {
         'encoding': 'Lossless'
     },
     'V0': {
-        'format' : 'MP3',
-        'encoding' : 'V0 (VBR)'
+        'format': 'MP3',
+        'encoding': 'V0 (VBR)'
     },
     '320': {
-        'format' : 'MP3',
-        'encoding' : '320'
+        'format': 'MP3',
+        'encoding': '320'
     },
     'V2': {
-        'format' : 'MP3',
-        'encoding' : 'V2 (VBR)'
+        'format': 'MP3',
+        'encoding': 'V2 (VBR)'
     },
 }
 
+
 def allowed_transcodes(torrent):
     """Some torrent types have transcoding restrictions."""
-    preemphasis = re.search(r"""pre[- ]?emphasi(s(ed)?|zed)""", torrent['remasterTitle'], flags=re.IGNORECASE)
+    preemphasis = re.search(
+        r"""pre[- ]?emphasi(s(ed)?|zed)""", torrent['remasterTitle'], flags=re.IGNORECASE)
     if preemphasis:
         return []
     else:
         return formats.keys()
 
+
 class LoginException(Exception):
     pass
 
+
 class RequestException(Exception):
     pass
+
 
 class RedactedAPI:
     def __init__(self, username=None, password=None, session_cookie=None):
@@ -76,7 +81,7 @@ class RedactedAPI:
         self.userid = None
         self.tracker = "https://flacsfor.me/"
         self.last_request = time.time()
-        self.rate_limit = 2.0 # seconds between requests
+        self.rate_limit = 2.0  # seconds between requests
         self._login()
 
     def _login(self):
@@ -90,7 +95,7 @@ class RedactedAPI:
             self._login_username_password()
 
     def _login_cookie(self):
-        mainpage = 'https://redacted.ch/';
+        mainpage = 'https://redacted.ch/'
         cookiedict = {"session": self.session_cookie}
         cookies = requests.utils.cookiejar_from_dict(cookiedict)
 
@@ -129,7 +134,8 @@ class RedactedAPI:
             raise LoginException
 
     def logout(self):
-        self.session.get("https://redacted.ch/logout.php?auth=%s" % self.authkey)
+        self.session.get(
+            "https://redacted.ch/logout.php?auth=%s" % self.authkey)
 
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
@@ -187,7 +193,8 @@ class RedactedAPI:
 
     def snatched(self, skip=None, media=lossless_media):
         if not media.issubset(lossless_media):
-            raise ValueError('Unsupported media type %s' % (media - lossless_media).pop())
+            raise ValueError('Unsupported media type %s' %
+                             (media - lossless_media).pop())
 
         # gazelle doesn't currently support multiple values per query
         # parameter, so we have to search a media type at a time;
@@ -215,10 +222,12 @@ class RedactedAPI:
     def upload(self, group, torrent, new_torrent, format, description=[]):
         url = "https://redacted.ch/upload.php?groupid=%s" % group['group']['id']
         response = self.session.get(url)
-        forms = mechanize.ParseFile(StringIO(response.text.encode('utf-8')), url)
+        forms = mechanize.ParseFile(
+            StringIO(response.text.encode('utf-8')), url)
         form = forms[-1]
-        form.find_control('file_input').add_file(open(new_torrent), 'application/x-bittorrent', os.path.basename(new_torrent))
-        #if torrent['remastered']:
+        form.find_control('file_input').add_file(
+            open(new_torrent), 'application/x-bittorrent', os.path.basename(new_torrent))
+        # if torrent['remastered']:
         #    form.find_control('remaster').set_single('1')
         form['remaster_year'] = str(torrent['remasterYear'])
         form['remaster_title'] = torrent['remasterTitle']
@@ -238,7 +247,8 @@ class RedactedAPI:
     def set_24bit(self, torrent):
         url = "https://redacted.ch/torrents.php?action=edit&id=%s" % torrent['id']
         response = self.session.get(url)
-        forms = mechanize.ParseFile(StringIO(response.text.encode('utf-8')), url)
+        forms = mechanize.ParseFile(
+            StringIO(response.text.encode('utf-8')), url)
         form = forms[-3]
         form.find_control('bitrate').set('1', '24bit Lossless')
         _, data, headers = form.click_request_data()
@@ -253,7 +263,8 @@ class RedactedAPI:
     def get_better(self, search_type=3, tags=None):
         if tags is None:
             tags = []
-        data = self.request('better', method='transcode', type=search_type, search=' '.join(tags))
+        data = self.request('better', method='transcode',
+                            type=search_type, search=' '.join(tags))
         out = []
         for row in data:
             out.append({
@@ -282,6 +293,7 @@ class RedactedAPI:
 
     def get_torrent_info(self, id):
         return self.request('torrent', id=id)['torrent']
+
 
 def unescape(text):
     return HTMLParser.HTMLParser().unescape(text)
