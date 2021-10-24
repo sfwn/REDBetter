@@ -95,7 +95,7 @@ class RedactedAPI:
         cookies = requests.utils.cookiejar_from_dict(cookiedict)
 
         self.session.cookies.update(cookies)
-        r = self.session.get(mainpage)
+        r = self.session.get(mainpage, cert=False, verify=False)
         try:
             accountinfo = self.request('index')
             self.authkey = accountinfo['authkey']
