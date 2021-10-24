@@ -1,4 +1,5 @@
 mechanize==0.2.5
 mutagen>=1.20
-requests>=1.0
+requests>=2.10.0
 Unidecode>=1.0.22
+pysocks>=1.6.6
