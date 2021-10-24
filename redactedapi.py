@@ -102,6 +102,8 @@ class RedactedAPI:
 
         self.session.cookies.update(cookies)
         r = self.session.get(mainpage, verify=False)
+        print(r)
+        print(r.text)
         try:
             accountinfo = self.request('index')
             self.authkey = accountinfo['authkey']
@@ -153,8 +155,8 @@ class RedactedAPI:
         try:
             parsed = json.loads(r.content)
             if parsed['status'] != 'success':
-                #raise RequestException
-                return None
+                raise RequestException
+                # return None
             return parsed['response']
         except ValueError:
             raise RequestException
