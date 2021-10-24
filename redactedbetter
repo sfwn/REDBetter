@@ -23,14 +23,8 @@ def create_description(torrent, flac_dir, format, permalink):
                                         'input.flac', 'output' + transcode.encoders[format]['ext'])
 
     description = [
-        'Transcode of [url=%s]%s[/url]' % (permalink, permalink),
-        '',
         'Transcode process:',
-        '',
         '[code]%s[/code]' % ' | '.join(cmds),
-        '',
-        'Created using [url=https://redacted.ch/forums.php?action=viewthread&threadid=35524]REDBetter (iw00t fork)[/url]'
-        ''
     ]
     return description
 
