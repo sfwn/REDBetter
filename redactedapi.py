@@ -83,6 +83,7 @@ class RedactedAPI:
         self.last_request = time.time()
         self.rate_limit = 2.0  # seconds between requests
         self._login()
+        self.session.verify = False
 
     def _login(self):
         if self.session_cookie is not None:
@@ -100,7 +101,7 @@ class RedactedAPI:
         cookies = requests.utils.cookiejar_from_dict(cookiedict)
 
         self.session.cookies.update(cookies)
-        r = self.session.get(mainpage, cert=False, verify=False)
+        r = self.session.get(mainpage, verify=False)
         try:
             accountinfo = self.request('index')
             self.authkey = accountinfo['authkey']
@@ -118,7 +119,7 @@ class RedactedAPI:
         loginpage = 'https://redacted.ch/login.php'
         data = {'username': self.username,
                 'password': self.password}
-        r = self.session.post(loginpage, data=data)
+        r = self.session.post(loginpage, data=data, verify=False)
         if r.status_code != 200:
             raise LoginException
         accountinfo = self.request('index')
