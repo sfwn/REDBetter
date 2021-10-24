@@ -62,6 +62,8 @@ def border_msg(msg):
 
 
 def main():
+    sys.getfilesystemencoding = lambda: 'UTF-8'
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter, prog='redactedbetter')
     parser.add_argument('release_urls', nargs='*',
